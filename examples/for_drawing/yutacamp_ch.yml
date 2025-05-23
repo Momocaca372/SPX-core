@@ -1,0 +1,74 @@
+meta:
+  title: SPX風格圖像描述 - 1月黃昏於富士山露營雪景
+  project_type: SPX
+  style:
+    背景: 寫實風格
+    人物: 吉卜力風
+    情境: 悠閒
+
+background:
+  time: 1月黃昏
+  weather: 下雪
+  location:
+    name: 富士山湖邊露營區
+    elements:
+      - 富士山雪峰
+      - 半結冰湖面
+      - 鋪雪的露營地
+      - 雪地腳印
+      - 木桌與掛燈
+  lighting:
+    sunset_glow: 夕陽金橘與雪地冷藍交錯
+    firelight: 營火光影反映在人物與雪地上
+  atmosphere: 寧靜、寒冷中帶暖意、生活感強烈
+  reflections:
+    lake_reflection: 火光與遠山倒映在湖面上
+
+entities:
+  - type: person
+    role: 少女A
+    description: 高中女生
+    appearance:
+      hair: 棕色短髮，微捲，戴針織帽
+      clothing:
+        - 卡其色連帽外套
+        - 深藍毛衣
+        - 防水登山褲
+        - 雪靴
+    posture: 半蹲吃泡麵，表情專注帶笑
+
+  - type: person
+    role: 少女B
+    description: 高中女生
+    appearance:
+      hair: 黑色馬尾，綁紅色緞帶
+      clothing:
+        - 紅色羽絨外套
+        - 牛仔褲
+        - 包裹厚毛毯
+      accessories:
+        - 保溫杯
+    posture: 坐在露營椅上，神情放鬆滿足
+
+  - type: person
+    role: 少女C
+    description: 高中女生
+    appearance:
+      hair: 金棕色齊瀏海長髮，自然捲
+      clothing:
+        - 深綠風衣
+        - 亮橘毛線圍巾
+        - 灰色手套
+    posture: 蹲在火堆前添木柴，火光映照臉部表情溫暖
+
+post_processing:
+  hdr: true
+  soft_edges: true
+  snow_particle_effects: true
+  depth_of_field: true
+  tone_adjustment:
+    highlight_warmth: 強化夕陽光感
+    shadow_coolness: 突顯雪景冷調
+  glow_effects:
+    - 營火自然光暈
+    - 雪花粒子閃光漂浮

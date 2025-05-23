@@ -1,0 +1,76 @@
+meta:
+  title: SPX Style Image Description - January Dusk at Mt. Fuji Lakeside Camp
+  project_type: SPX
+  style:
+    background: Realistic
+    characters: Ghibli-inspired
+    mood: Relaxed
+
+background:
+  time: January, dusk
+  weather: Snowing
+  location:
+    name: Mt. Fuji lakeside camping area
+    elements:
+      - Snow-covered peak of Mt. Fuji
+      - Partially frozen lake
+      - Snow-covered campsite
+      - Footprints in the snow
+      - Wooden table and hanging lantern
+  lighting:
+    sunset_glow: Golden-orange sunlight contrasting with cool blue snow
+    firelight: Campfire glow reflected on characters and snow
+  atmosphere: Quiet, cold with a warm tone, strong sense of daily life
+  reflections:
+    lake_reflection: Firelight and mountain reflections on the lake surface
+
+entities:
+  - type: person
+      role: Girl A (Eating instant noodles)
+      description: High school girl
+      appearance:
+        hair: Short, wavy brown hair with a knitted hat
+        clothing:
+          - Khaki hooded jacket
+          - Navy sweater
+          - Waterproof hiking pants
+          - Snow boots
+        accessories:
+          - Cup of steaming instant noodles
+      posture: Sitting near the tent, holding a cup of noodles with both hands, smiling softly as steam rises into the cold air
+
+  - type: person
+    role: Girl B (Resting)
+    description: High school girl
+    appearance:
+      hair: Black ponytail tied with a red ribbon
+      clothing:
+        - Red down jacket
+        - Jeans
+        - Wrapped in a thick blanket
+      accessories:
+        - Thermos cup
+    posture: Sitting on a camping chair, relaxed and content expression
+
+  - type: person
+    role: Girl C (Tending the fire)
+    description: High school girl
+    appearance:
+      hair: Long, naturally wavy light brown hair with straight bangs
+      clothing:
+        - Dark green coat
+        - Bright orange knitted scarf
+        - Gray gloves
+    posture: Crouching near the fire, adding wood, face lit warmly by the flames
+
+post_processing:
+  hdr: true
+  soft_edges: true
+  snow_particle_effects: true
+  depth_of_field: true
+  tone_adjustment:
+    highlight_warmth: Enhance sunlight glow
+    shadow_coolness: Accentuate cool tones in the snow
+  glow_effects:
+    - Natural firelight bloom
+    - Floating snowflake sparkle particles

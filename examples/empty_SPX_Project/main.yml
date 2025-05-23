@@ -1,0 +1,38 @@
+meta:
+  project: -- "Project codename or purpose"
+  version: -- "Version of the semantic project"
+  description: -- "Brief overview of what this project enables"
+  framework: "framework.yml"  # path to full structure description
+  entry_modules:
+    - -- "Relative paths to root SPX modules (e.g., router/, examples/)"
+  output_path: -- "Where generated results will go (e.g., output/)"
+  default_language: -- "Target output language (e.g., C#)"
+  requires_ai_inference: -- "true/false depending on AI use"
+
+layout:
+  folders:
+    entity/:
+      role: -- "Stores role definitions, models, or data archetypes"
+    router/:
+      role: -- "Task route mappings, relationship trees"
+    utility/:
+      role: -- "Shared logic snippets or helper DSL"
+    output/:
+      role: -- "Target for generated artifacts (code/docs/etc.)"
+  files:
+    style.yml: -- "Tone or logic scope config per module"
+    framework.yml: -- "This structure description file"
+    main.yml: -- "Main entry and style control center"
+
+profile:
+  default_style:
+    tone: -- "e.g., declarative, instructional, casual"
+    null_handling: -- "e.g., explicit, safe-default"
+    logic_expression: -- "e.g., LinQ, declarative flow"
+  default_rules:
+    - id: -- "Rule identifier"
+      type: -- "e.g., precondition, validation"
+      applies_to: -- "What module/component this applies to"
+      message: -- "Message or policy description"
+  shared_methods:
+    - -- "Method names accessible in DSL (e.g., getClientIp, Handle500V2)"

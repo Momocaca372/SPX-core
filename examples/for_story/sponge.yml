@@ -1,0 +1,145 @@
+meta:
+  project: "SpongeBob SquarePants World Description"
+  version: "1.0"
+  description: "A semantic description of SpongeBob's world and key characters."
+  framework: "framework.yml"
+  entry_modules:
+    - "entity/characters.spx"
+    - "entity/world_setting.spx"
+  output_path: "output/spongebob_description.txt"
+  default_language: "Plain Text"
+  requires_ai_inference: true # 我們將使用AI來生成更自然的描述
+
+layout:
+  folders:
+    entity:
+      role: "Defines the core elements of the SpongeBob universe: characters and settings."
+    output:
+      role: "Contains the generated textual description of the world and characters."
+
+profile:
+  default_style:
+    tone: "declarative"
+    null_handling: "safe-default"
+    logic_expression: "declarative flow" # 適合描述性的內容
+
+  shared_methods:
+    none    
+
+---
+# entity/world_setting.spx
+
+entity:
+  id: bikini_bottom
+  type: location
+  name: "比奇堡"
+  description: |
+    比奇堡是一個位於太平洋深處、陽光明媚的海底城市。
+    這裡充滿了色彩繽紛的珊瑚礁、火山和岩石，是許多海洋生物的家園。
+    比奇堡的居民過著熱鬧而奇特的生活，小鎮上有著名的蟹堡王餐廳、
+    海之霸以及水母田等各種有趣的場所。
+  properties:
+    - name: climate
+      value: "溫暖，全年陽光明媚"
+    - name: residents_type
+      value: "海洋生物"
+    - name: key_landmarks
+      value: ["蟹堡王", "海之霸", "水母田", "鳳梨屋", "石頭屋", "章魚哥的家"]
+
+---
+# entity/characters.spx
+
+entity:
+  id: spongebob_squarepants
+  type: character
+  name: "海綿寶寶"
+  description: |
+    海綿寶寶是一塊方形的黃色海綿，住在比奇堡的一個鳳梨屋裡。
+    他充滿了樂觀與活力，熱愛他的工作——蟹堡王餐廳的廚師，
+    擅長製作美味的蟹堡。他最大的樂趣是和派大星一起抓水母、吹泡泡，
+    以及在比奇堡展開各種奇特的冒險。
+  properties:
+    - name: species
+      value: "海綿"
+    - name: occupation
+      value: "蟹堡王廚師"
+    - name: home
+      value: "鳳梨屋"
+    - name: personality_traits
+      value: ["樂觀", "天真", "熱情", "忠誠", "善良"]
+
+entity:
+  id: patrick_star
+  type: character
+  name: "派大星"
+  description: |
+    派大星是海綿寶寶最好的朋友，一隻粉紅色的海星。
+    他住在海綿寶寶隔壁的石頭屋裡，個性懶散、單純，但卻非常忠誠。
+    派大星經常與海綿寶寶一起參與各種滑稽的活動，
+    雖然思考邏輯與常人不同，卻總能帶來意想不到的樂趣。
+  properties:
+    - name: species
+      value: "海星"
+    - name: occupation
+      value: "無業遊民"
+    - name: home
+      value: "石頭屋"
+    - name: personality_traits
+      value: ["單純", "懶散", "忠誠", "愚鈍", "幽默"]
+
+entity:
+  id: squidward_tentacles
+  type: character
+  name: "章魚哥"
+  description: |
+    章魚哥是海綿寶寶的鄰居和同事，一隻脾氣暴躁的章魚。
+    他住在一個像摩艾石像的房子裡，對藝術充滿熱情，
+    尤其喜歡演奏豎笛和跳舞，但缺乏天賦。
+    章魚哥渴望平靜的生活，卻總是被海綿寶寶和派大星的喧鬧所打擾，
+    因此他總是表現出不耐煩和冷漠。
+  properties:
+    - name: species
+      value: "章魚"
+    - name: occupation
+      value: "蟹堡王收銀員"
+    - name: home
+      value: "摩艾石像屋"
+    - name: personality_traits
+      value: ["脾氣暴躁", "自戀", "渴望藝術", "悲觀", "諷刺"]
+
+entity:
+  id: mr_krabs
+  type: character
+  name: "蟹老闆"
+  description: |
+    蟹老闆是蟹堡王餐廳的老闆，一隻紅色的螃蟹。
+    他極度吝嗇且熱愛金錢，總是想盡辦法賺錢。
+    蟹老闆非常看重蟹堡王的秘方，並且經常利用海綿寶寶的善良來達成自己的目的。
+  properties:
+    - name: species
+      value: "螃蟹"
+    - name: occupation
+      value: "蟹堡王老闆"
+    - name: personality_traits
+      value: ["吝嗇", "愛財如命", "精明", "自私"]
+
+entity:
+  id: sandy_cheeks
+  type: character
+  name: "珊迪"
+  description: |
+    珊迪是一隻來自德州的陸地松鼠，住在一個充滿空氣的玻璃屋裡。
+    她是一位科學家和發明家，熱愛極限運動和探索。
+    珊迪是海綿寶寶和派大星的好朋友，經常帶他們體驗陸地上的活動，
+    並在科學實驗中展現她的聰明才智。
+  properties:
+    - name: species
+      value: "松鼠"
+    - name: occupation
+      value: "科學家/發明家"
+    - name: home
+      value: "圓頂樹屋 (充滿空氣)"
+    - name: personality_traits
+      value: ["聰明", "勇敢", "好動", "友善"]
+
+# ... 更多的角色可以按照此模式添加 ...

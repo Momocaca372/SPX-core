@@ -1,0 +1,27 @@
+framework:
+  version: "0.1"
+  description: |
+    Describes the SPX project folder structure, roles of each part,
+    and how they compose semantic modeling workflows.
+
+  structure:
+    entity/: 
+      purpose: "Define world models, roles, or object types"
+      type: "semantic"
+    router/: 
+      purpose: "Structure module flow, route indexing"
+      type: "task map"
+    utility/: 
+      purpose: "Shared DSL utilities or logic snippets"
+      type: "reusable"
+    output/: 
+      purpose: "Target for generated content (code or results)"
+      type: "output container"
+
+  usage:
+    extendable: true
+    intended_for: ["SPX developers", "semantic teams", "AI framework builders"]
+    how_to_start: |
+      - Add SPX modules under examples/ or router/
+      - Edit main.yml to define logic style
+      - Reference this structure using meta.framework

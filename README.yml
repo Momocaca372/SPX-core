@@ -1,0 +1,62 @@
+meta:
+  id: spx-readme
+  type: document
+  version: 1.0
+  title: SPX 語意語言專案說明
+  desc: 用 SPX 自身語法結構來描述本語言的概念、用途與組成，作為 README 文件替代或補充
+
+param:
+  - name: user
+    type: developer | prompt engineer | AI builder
+    desc: 使用者可為程式開發者、AI 工程師或一般邏輯流程設計者
+
+rule:
+  - user must understand basic structured markup
+  - spx syntax should preserve semantic clarity regardless of encoding format
+  - logic section must describe use cases clearly
+  - each section must reflect real world usage
+
+logic:
+  - section: 語言設計目的
+    content: >
+      SPX 是一種結構優先、語意導向的描述式語言。旨在讓使用者不需撰寫程式邏輯，即可透過語法說明任務內容與意圖，並能自動生成對應的程式、流程、Prompt 結構等。
+
+  - section: 使用場景 Use Cases
+    list:
+      - AI prompt 結構化與重用
+      - 表單與任務邏輯定義
+      - 多 API 結構快速產生
+      - 驗證規則/條件式流程
+      - 自動測試產生
+      - 多模態模型協作任務分工
+
+  - section: 語法順序結構
+    ordered:
+      - meta
+      - param
+      - rule
+      - logic
+      - output
+      - error
+      - prompt (optional)
+      - style (optional)
+
+  - section: 範例片段
+    code:
+      lang: yaml
+      snippet: |
+        meta:
+          id: ExampleApi
+        logic:
+          foreach: [Create, Read, Delete]
+          do:
+            - let: param
+              do: ParseJson(body)
+            - return: _svc.${item}(param)
+
+output:
+  success: Rendered markdown file or GitHub README
+  use_for:
+    - 顯示在 repo 首頁
+    - 轉換為教學文檔
+    - 供 SPX 工具生成 metadata

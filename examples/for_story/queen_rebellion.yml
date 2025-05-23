@@ -1,0 +1,70 @@
+meta:
+  goal: "Plot a narrative arc involving a British queen and a secret rebellion amidst a depleted treasury and hidden royal treasures, with international intrigue."
+  tone: "tense, politically charged, subtly melancholic"
+  perspective: "third-person omniscient" # 全知視角，更能展現各方陣營
+
+characters:
+  - id: "queen_victoria_alexandra" # 假設的名字，符合年代感
+    role: "ruler"
+    nationality: "British"
+    era: "1820s"
+    traits: ["strategic", "isolated", "burdened by national debt", "fiercely protective of legacy"]
+    secret: "Knowledge of a hidden royal treasure, a family secret kept to avoid public panic over the depleted treasury."
+
+  - id: "rebel_commander_arthur" # 假設的名字
+    role: "ex-knight"
+    nationality: "British"
+    motivation: "Restore justice and curb growing corruption within the Privy Council, believing the Queen is either unaware or complicit."
+    faction_ties: "Leads a network of disaffected gentry and disillusioned military veterans."
+
+  - id: "chancellor_lord_blackwood" # 總理/大臣
+    role: "chief advisor"
+    nationality: "British"
+    traits: ["ambitious", "cunning", "financially astute", "manipulative"]
+    faction_ties: "Aligns with powerful mercantile interests and maintains secret correspondence with the French court for personal gain, while outwardly supporting the Crown."
+    relationship_with_queen: "Outwardly loyal, inwardly dismissive of her perceived naivety regarding the kingdom's finances."
+
+  - id: "archbishop_of_canterbury" # 另一位大臣，代表教會力量
+    role: "spiritual advisor/council member"
+    nationality: "British"
+    traits: ["pious", "conservative", "influential among the populace", "wary of foreign influence"]
+    faction_ties: "Leans towards traditionalist noble families and fears the erosion of moral order. Views the Chancellor's rapid rise with suspicion."
+    relationship_with_chancellor: "Publicly respectful, privately antagonistic, distrusting his secular motives and growing power."
+
+  - id: "spy_jean_pierre" # 法國間諜
+    role: "foreign agent"
+    nationality: "French"
+    cover_identity: "Art dealer"
+    motivation: "Destabilize British influence in Europe; gather intelligence on internal dissent and the treasury's true state."
+    ties_to_rebel: "Feeds information and possibly resources to the rebellion, seeing it as an opportunity to weaken Britain, but with his own agenda."
+    ties_to_chancellor: "Engages in clandestine dealings, trading intelligence for political and financial favors that benefit France."
+
+scenes:
+  - title: "The Bleeding Coffers" # 國庫空虛的場景
+    trigger: "Latest treasury reports confirm critical depletion, leading to unrest among the populace and gentry."
+    shift: "Queen considers drastic, politically unpopular measures; her isolation deepens as trust in her advisors wavers."
+    involves: ["queen_victoria_alexandra", "chancellor_lord_blackwood", "archbishop_of_canterbury"]
+    reveals: "The Chancellor presents a grim financial picture, while subtly deflecting blame. The Archbishop advises moral fortitude but lacks practical solutions."
+
+  - title: "Council Distrust Intensifies" # 議會不信任
+    trigger: "Conflicting reports from the French border, hinting at unusual troop movements and diplomatic overtures inconsistent with official channels."
+    shift: "Queen's suspicion of Chancellor Lord Blackwood solidifies, as intelligence gathered by her dwindling loyalists suggests his duplicity. The Archbishop expresses thinly veiled concerns."
+    involves: ["queen_victoria_alexandra", "chancellor_lord_blackwood", "archbishop_of_canterbury"]
+    reveals: "The Queen receives fragmented intelligence that contradicts the Chancellor's assurances, raising doubts about his true allegiances."
+
+  - title: "Night Rendezvous in the Docks" # 夜間密會
+    involves: ["rebel_commander_arthur", "spy_jean_pierre"]
+    setting: "A dimly lit, fog-shrouded London dockside warehouse."
+    reveals: "The French spy provides intel on a potential weakness in the Queen's defenses, urging the rebellion to accelerate its plans. He subtly hints at a powerful ally within the court (the Chancellor) without naming him."
+
+  - title: "Whispers of the Crown Jewels" # 提及皇家秘寶的場景
+    trigger: "The Queen, in a moment of desperate solitude, recalls ancient family lore or a coded journal entry regarding a forgotten cache of royal wealth."
+    shift: "A new, desperate hope emerges, but also the terrible burden of secrecy and the risk of exposing a vulnerability."
+    involves: ["queen_victoria_alexandra", "a trusted, elderly lady-in-waiting (non-speaking role, for emotional context)"]
+    reveals: "The Queen's internal monologue reveals her secret knowledge of the hidden treasure, its significance, and the dilemma of revealing it versus preserving the Crown's dignity."
+
+  - title: "A Gambit of Alliances" # 陣營關係衝突加劇
+    trigger: "The rebel faction begins to subtly test loyalties within the military and lower nobility; the Chancellor tightens his grip on key government appointments."
+    shift: "Lines are drawn, forcing characters to make difficult choices about allegiance and the future of the kingdom."
+    involves: ["all main characters, implicitly or explicitly interacting"]
+    reveals: "The intricate web of allegiances: the Chancellor uses his mercantile ties to fund his machinations, the Archbishop rallies conservative forces, and the Rebel Commander seeks to exploit widespread discontent. The Queen watches, increasingly isolated, as her inner circle fragments."

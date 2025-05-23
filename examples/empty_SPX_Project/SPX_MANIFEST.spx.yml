@@ -1,0 +1,17 @@
+meta:
+  id: spx-manifest
+  version: 1.0
+  title: SPX Language Definition
+  desc: SPX is a semantic-first DSL designed to define structured tasks and workflows for code, prompt, and API generation.
+
+param:
+  - name: format
+    type: yaml | json | xml
+    required: true
+  - name: modules
+    type: list
+    desc: SPX can target APIs, prompts, logic flows, test specs
+
+output:
+  intent: Describe how SPX documents define developer intent in a structured way
+  use_cases: [ai-prompt, api-generator, form-validation, chat-flow, test-cases]

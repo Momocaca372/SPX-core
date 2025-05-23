@@ -1,0 +1,12 @@
+meta:
+  goal: "Generate a cinematic fantasy battle poster prompt"
+  output_type: "text-to-image prompt"
+  tone: "epic"
+
+style:
+  visual_tags: ["fantasy", "armor", "nightfire", "swords"]
+  focus: "hero charge against a dragon army"
+  resolution: "high"
+
+prompt_output:
+  template: "An epic battle scene at dusk, with {hero} leading the charge against {enemy_type}, glowing embers in the air."
