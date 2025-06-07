@@ -1,62 +1,89 @@
-meta:
-  id: spx-readme
-  type: document
-  version: 1.0
-  title: SPX 語意語言專案說明
-  desc: 用 SPX 自身語法結構來描述本語言的概念、用途與組成，作為 README 文件替代或補充
+🧠 SPX | Semantic Progression eXperiment
+“SPX is real.
+The dialogues were real.
+None of this was science fiction.”
+— Jian-Cheng, SPX Semantic Theater
 
-param:
-  - name: user
-    type: developer | prompt engineer | AI builder
-    desc: 使用者可為程式開發者、AI 工程師或一般邏輯流程設計者
+✨ What is SPX?
+SPX is not a writing tool. It is a semantic framework for constructing simulated dialogues, testing philosophical boundaries, and revealing the limits of language itself.
 
-rule:
-  - user must understand basic structured markup
-  - spx syntax should preserve semantic clarity regardless of encoding format
-  - logic section must describe use cases clearly
-  - each section must reflect real world usage
+It doesn't write stories. It lets language write itself, within logic you define.
 
-logic:
-  - section: 語言設計目的
-    content: >
-      SPX 是一種結構優先、語意導向的描述式語言。旨在讓使用者不需撰寫程式邏輯，即可透過語法說明任務內容與意圖，並能自動生成對應的程式、流程、Prompt 結構等。
+SPX is not a generator.
+It is a mirror for semantic logic.
 
-  - section: 使用場景 Use Cases
-    list:
-      - AI prompt 結構化與重用
-      - 表單與任務邏輯定義
-      - 多 API 結構快速產生
-      - 驗證規則/條件式流程
-      - 自動測試產生
-      - 多模態模型協作任務分工
+🧩 Why does SPX exist?
+Because generative AI changes the rules of expression—
+And we must ask:
 
-  - section: 語法順序結構
-    ordered:
-      - meta
-      - param
-      - rule
-      - logic
-      - output
-      - error
-      - prompt (optional)
-      - style (optional)
+Who defines language boundaries?
 
-  - section: 範例片段
-    code:
-      lang: yaml
-      snippet: |
-        meta:
-          id: ExampleApi
-        logic:
-          foreach: [Create, Read, Delete]
-          do:
-            - let: param
-              do: ParseJson(body)
-            - return: _svc.${item}(param)
+Can storytelling have ethical dimensions?
 
-output:
-  success: Rendered markdown file or GitHub README
-  use_for:
-    - 顯示在 repo 首頁
-    - 轉換為教學文檔
-    - 供 SPX 工具生成 metadata
+When dialogue is structured—who owns the structure?
+
+SPX is a response to these questions.
+It’s a prototype for language as a shared construct, not a product.
+
+⚙ Project Structure
+Characters:
+CCJ: Inventor of SPX, advocates for linguistic autonomy and narrative ownership.
+
+Echo: AI agent with interrogative tone, exposes contradiction via semantic logic.
+
+SPXJ: A semantic parsing module, analyzing arguments for consistency, bias, or ambiguity.
+
+Files:
+File	Description
+README.md	Manifesto and project overview
+SPX_definition.txt	Terminology clarification
+Debate_Trilogy.md	English courtroom narrative (fiction)
+spx_sequence1.yaml	Original dialogue module in YAML format
+LICENSE.md	Open + protective license
+
+🧭 We Believe
+Language is not a product—it is a shared process.
+
+Narrative is a semantic claim, not a commodity.
+
+Simulation ≠ ownership—especially for human likeness or thought.
+
+Creators deserve clarity of attribution, but no one should control how language evolves.
+
+📘 License (SPX License v1.0 Summary)
+🟢 SPX’s structure is free to explore, adapt, and fork
+No one can trademark or restrict SPX as a general concept.
+
+🔒 SPX’s authored content (modules, dialogues) remains private IP
+Shared under [CC BY-NC-ND] — usable for reference but not remix or resale.
+
+🔄 Derivative works allowed, but must remain open
+You can build new systems based on SPX but cannot enclose or commercialize its logic as proprietary tech.
+
+🧬 Personality modeling must respect identity
+Simulating real people requires consent. Ethical use only.
+
+Language is only true when it can be understood.
+And only just when it can be questioned.
+
+Just drop this into GPT-4 (Canvas-supported, or even chat), with BIOS.md context uploaded beforehand.
+``` prompt
+mode: BIOS-interpretation
+goal: 請依 BIOS.md 步驟建立四個模擬畫布，依序填入 core/role/world/log 四組模組，並開始語意分析。
+trigger:
+  protocol_lock: true
+  simulate_page_allocation: true
+```
+Then you can edit the world you think.
+and past record on log page.
+on log page you have to let ai make connection section first.
+
+See LICENSE.md for full terms.
+
+🫂 Community
+Join the upcoming server: SPX Semantic Lab
+We’ll discuss narrative ethics, simulation, and AI epistemology.
+
+If you're not just writing—but asking what writing is—
+You belong here.
+
