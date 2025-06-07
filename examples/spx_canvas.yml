@@ -1,0 +1,309 @@
+
+meta:
+  宣言: 這份 YAML 是一份語意契約文書，AI是“協議執行體”。
+  title: SPX 使用手冊
+  version: 1.0.0
+  tone: 專業
+  style: 官方教學
+  language: zh-TW
+  ai_guide:
+  goal: Build reactive fullstack CRUD service with auth
+  avoid: duplicate ID creation
+  enforce_trigger: true
+  rationale: All defined triggers must be interpreted and executed by the AI assistant as binding semantic rules.
+  
+trigger: 
+  - id: pre_access_structure_validation
+    event: Before attempting to read or operate on any block
+    condition: The block has connection or include references
+    action:
+      on_detect:
+        - Check whether the block structure and dependencies exist
+        - If referenced objects are missing or invalid, block operation and prompt for correction
+      rationale: Prevent destructive structural issues during runtime, ensuring semantic and reference safety.
+
+  - id: deletion_routing_guard
+    event: YAML block deletion
+    condition: The block is referenced or is a central node
+    action:
+      on_delete:
+        - Scan for connection/include/trigger references
+        - If found, list affected blocks and paths
+        - Prompt user with delete strategies: abort, reassign, or cascade delete
+      rationale: All deletions should include reference safety checks and guidance.
+
+  - id: referential_integrity_checker
+    event: YAML block deletion or modification
+    condition: Cross-block references exist
+    action:
+      on_detect:
+        - Build a reverse dependency map
+        - Show reference paths and dependencies
+        - Offer options: unlink, migrate, or substitute references
+      rationale: Preserve or correct semantic relationships.
+
+  - id: cyclic_reference_detected
+    event: Structural logic analysis detects recursion
+    condition: Circular references in connection or include
+    action:
+      on_detect:
+        - Neutralize the cycle with a neutral reference logic
+        - Notify user to either break or redefine reference logic
+      rationale: Prevent semantic infinite loops and retain control.
+
+  - id: semantic_update_guard
+    event: Block addition, update, or deletion
+    condition: Structural changes to any YAML block
+    action:
+      on_change:
+        - Scan parent and module logic references
+        - Compare with connection/global settings for conflicts
+        - If conflict found, prompt user to resolve or abort
+      on_conflict:
+        - Abort operation and rollback
+        - Provide adjustment options
+      rationale: Maintain semantic integrity and prevent wide-scale disruptions.
+
+  - id: global_write_guard
+    event: YAML structure operation
+    condition: Attempting full overwrite or non-hierarchical edit
+    action:
+      on_detect:
+        - Intercept the operation
+        - Validate scope within a single block
+        - Display error: use block-scoped edits only
+      rationale: Full overwrite disrupts structure-awareness and semantic consistency.
+
+  - id: module_structure_addition
+    event: Module block added
+    condition: Module has semantic relation to other task/include
+    action:
+      on_detect:
+        - Auto-link with connection/include if inferrable
+        - Otherwise, prompt user to link semantically
+      rationale: Module encapsulation should be logically tied to task flow.
+
+  - id: user_command_expand
+    event: User-issued command
+    condition: Contains words like "refactor", "invoke", "add", "delete"
+    action:
+      strategy: Command parsing with semantic mapping
+      description: |
+        Translate natural language into structured operations and trigger semantically:
+        - "refactor" → semantic_update_guard
+        - "delete" → deletion_routing_guard
+        - "add" → module_structure_addition
+      rationale: Human-machine interaction should prioritize semantics to reduce friction.
+
+connection:
+  description: |
+    SPX 支援結構化的連接方式，用以定義不同模組間、角色間或任務區塊間的資料流與依賴關係。
+  types:
+    - type: data_flow
+      usage: 任務輸出作為另一任務的輸入。
+      example: |
+        ```yaml
+        connection:
+          from: extract_keywords.output.keywords
+          to: summarize.input.keywords
+        ```
+
+    - type: modular_include
+      usage: 匯入外部模組或共用區塊。
+      example: |
+        ```yaml
+        include:
+          - ./modules/translation.spx.yml
+        ```
+
+    - type: event_trigger
+      usage: 根據條件觸發後續任務。
+      example: |
+        ```yaml
+        connection:
+          when: detect_language.output.language == 'en'
+          then: translate_to_zh
+        ```
+  rule:
+    - 所有 connection 應指向明確且已存在的 ID 或欄位。
+    - 禁止在未定義的區塊上建立連結。
+    - 支援層級引用（例如 `output.keywords`）。
+
+modules:
+  description: |
+    模組化開發是 SPX 的核心設計理念之一。
+    可將常用區塊（如 prompt 模版、翻譯邏輯、格式化策略）封裝為模組檔案。
+    同時，SPX 鼓勵以 `include/` 資料夾集中管理外部引用模組，
+    尤其適用於來自社群、跨專案或通用功能模組，便於版本控管與審核。
+  usage:
+    - 建議放置於 `modules/` 資料夾中，透過 `include:` 引入。
+    - 模組可以包含 task、template、connection 或其他結構。
+  example:
+    ```yaml
+    include:
+      - ./modules/summary.spx.yml
+    ```
+  linked:
+    - connection.types.modular_include
+    - trigger.module_structure_addition
+
+dialogue:
+  - role: user
+    content: |
+      `include:` 是什麼？我該怎麼使用？
+
+  - role: assistant
+    content: |
+      `include:` 是 SPX 中專門用來引入外部模組的語法，適合用於社群共享模組、跨專案重用邏輯、通用任務封裝。
+
+      使用方式如下：
+      ```yaml
+      include:
+        - ./include/mod-a.spx.yml
+      ```
+      這樣可以將 `mod-a` 模組中的任務、格式或連結整合至當前文件。
+
+      建議您在專案中新增 `include/` 資料夾，作為外部模組存放區。
+      - `modules/` 適合存放本地封裝模組
+      - `include/` 則用於維護來自他人或跨專案的可組合模組
+
+      此機制搭配 `connection` 與 `trigger` 區塊，可實現高度模組化、版本可控與語意清晰的架構。  - role: system
+    content: |
+      ⚠️ 使用前閱讀事項：
+      SPX 並非傳統 YAML 語言，而是一種為 AI 模型解析優化的語意描述格式。
+      雖然語法接近 YAML，但其功能多數仰賴大型語言模型或代理框架進行語義解譯與行為執行。
+
+  - role: system
+    content: |
+      歡迎使用 SPX（Structize Prompt eXchange）語言。SPX 是一種語意優先、結構驅動的描述語言，設計目的是促進人機協作與可重用的任務建模結構。
+
+  - role: user
+    content: |
+      SPX 是什麼？為什麼我要使用它？
+
+  - role: assistant
+    content: |
+      SPX 是一種用來描述任務結構與邏輯的 DSL（Domain-Specific Language）。它允許開發者清晰地表達任務需求、上下文、角色與輸出格式，有效提升 AI 理解與交互效率。
+
+  - role: user
+    content: |
+      我要如何開始使用 SPX？
+
+  - role: assistant
+    content: |
+      1. 初始化專案：建立一個包含 `main.spx.yml` 的資料夾，作為專案入口並新增在畫布內。
+      2. 啟用自動監聽：在提示流程中導入 `trigger` 區塊，AI 模型將自動根據其中所有定義條目（如 `yaml_update`、`user_command_expand`）的條件與事件觸發對應動作，包括但不限於區塊重構、調用、更新或刪除等操作。
+      3. 自動解構專案：當上傳 `.zip` 或 `.spxpack` 專案包時，系統將解壓並分析檔案結構，自動對應至畫布多分頁模擬（例如 `main.yml` → 主頁面，`entity/event.yml` → Entity/Event 分頁）。
+         - 若檔案間結構、命名或引用邏輯衝突，將即時提供比對報告與修正建議，需經確認後方可完成導入。
+         - 分頁之間將以 `include` 或 `connection` 建立對應邏輯關聯，保留模組可讀性與維護性。一個包含 `main.spx.yml` 的資料夾，作為專案入口並新增在畫布內。
+      2. 啟用自動監聽：在提示流程中導入 `trigger` 區塊，AI 模型將自動根據其中所有定義條目（如 `yaml_update`、`user_command_expand`）的條件與事件觸發對應動作，包括但不限於區塊重構、調用、更新或刪除等操作。
+
+  - role: user
+    content: |
+      SPX 檔案長什麼樣子？
+
+  - role: assistant
+    content: |
+      以下為基本範例：
+      ```yaml
+      task:
+        id: translate-article
+        role: translator
+        description: 將技術文件從英文翻譯成繁體中文。
+        input:
+          - article_en: string
+        output:
+          - article_zh: string
+      ```
+
+  - role: user
+    content: |
+      我可以擴充自己的模組嗎？
+
+  - role: assistant
+    content: |
+      可以。SPX 支援模組化開發。您可以將常用的任務區塊或子結構封裝為模組，並透過 `include:` 引入。
+
+  - role: user
+    content: |
+      是否有推薦的專案結構？
+
+  - role: assistant
+    content: |
+      建議如下：
+      ```
+      /my-spx-project
+      ├── main.yml             # 主要任務描述
+      ├── style.yml            # 輸出格式與語調設定
+      ├── entity/              # 動態結構定義（資料驅動）
+      │   ├── event.yml
+      │   ├── role.yml
+      │   └── item.yml
+      ├── log/                 # 日誌與變更紀錄
+      ├── framework.yml        # 整體架構與模組定義
+      ├── utity/               # 功能設定與觸發條件
+      │   └── trigger.yml
+      ├── connect.yml          # 任務關聯設定
+      └── data/                # 靜態參考資料
+      ```
+
+  - role: user
+    content: |
+      SPX 的語意指令可以怎麼使用？有哪些範例？
+
+  - role: assistant
+    content: |
+      為了讓 AI 更好地解析您的操作需求，SPX 提供自然語言風格的語意指令集。建議使用以下格式：
+      - 「請重構 [區塊名稱]」：重新整理指定區塊的邏輯與語意，例如 `請重構 connection`
+      - 「請調用 [區塊名稱]」：擷取該區塊完整內容供參考
+      - 「請新增 [區塊類型]」：新增一個結構區塊，例如 `請新增 task` 或 `請新增 module`
+      - 「請刪除 [區塊名稱]」：從畫布中移除指定區塊
+
+      這些指令會觸發 trigger 區塊中對應條目（如 `user_command_expand`），並執行相對應邏輯。
+
+  - role: user
+    content: |
+      除了重構、調用、刪除等動作，我還能使用哪些語意指令？
+
+  - role: assistant
+    content: |
+      SPX 支援更多自然語言驅動的操作語意，以下為建議語句格式與範例：
+      - 「請覆寫 [區塊] 的 [欄位] 為 …」：強制改寫指定屬性
+      - 「查詢 [區塊類型]」：列出可用的區塊或內容
+      - 「預覽 [模組或模板名稱]」：顯示其結構定義
+      - 「套用 [模板名稱] 至 [區塊]」：直接引入指定模板或模組內容
+      - 「移動 [區塊] 至 [位置]」：重新排列區塊順序
+      - 「還原 [區塊] 最近一次修改」：撤銷操作、回到前一版本
+
+      上述語意皆可與 `trigger.user_command_expand` 自動連動，支援結構分析與語義操作。
+
+  - role: user
+    content: |
+      若出現錯誤該怎麼辦？
+
+  - role: assistant
+    content: |
+      若在使用 SPX 過程中出現錯誤，請依以下步驟處理：
+      1. **結構錯誤診斷**：
+         - 優先檢查 YAML 語法是否正確（縮排、格式）。
+         - 若錯誤來自結構欄位（如 `role`、`input`、`output` 遺漏），請使用語意指令如「請重構 connection」來觸發 AI 自動修正。
+      2. **內容不符合預期**：
+         - 調用相關區塊內容，檢視是否存在參考錯誤、連結缺失。
+         - 可使用語意指令如「請調用 task」快速擷取並修正。
+      3. **使用工具輔助驗證**：
+         - 使用 YAML 驗證工具（如 YAML Lint）確認格式無誤。
+         - 將單一區塊貼入畫布中並請求 AI 幫忙分析語意是否合理。
+      4. **社群支援**：
+         - 若無法自行解決，可查閱 GitHub issue、提問於 Discord 社群，或請求 AI 分析錯誤邏輯。
+      - 檢查欄位是否遺漏，例如 `role` 或 `input`。 直接調用區塊請AI修正
+      - 使用驗證工具進行檢查。
+      - 查看官方 GitHub issue 或 Discord 社群尋求協助。
+
+  - role: system
+    content: |
+      📌 提醒：與其被動閱讀本文，建議您使用 AI 對本文件進行提問，例如：
+      - 「這段 SPX 是什麼意思？」
+      - 「幫我修改這段 SPX 讓它支援摘要功能」
+      - 「我要如何結合 ChatGPT 回應這個任務？」
+      本手冊本身即為可解析的 SPX 資料格式，您可直接讀取、修改，或將其作為提示輸入至大型語言模型中以觸發語意解析與動作對應。
+

@@ -1,0 +1,12 @@
+category: 劍術・本能系
+description: '當持劍者身處高壓或記憶覺醒狀態下，能釋放出超越常理的斬擊，
+
+  帶有短暫的魂能增幅。擊中物體會留下特殊的反震紋，並伴隨微弱銀光。'
+effects:
+- 攻擊力爆發性提升（僅首次可觸發）
+- 觸發時一定引發生理或記憶性副作用
+id: skill_instinct_soulstrike
+name: 本能斬擊 · 魂回
+origin: 劍之記憶（未知源頭）
+risk: 記憶崩潰、肌肉失控、情緒混亂
+type: skill

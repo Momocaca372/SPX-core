@@ -1,0 +1,38 @@
+event: 神燈節煙火之夜
+timestamp: '2025-05-22T20:00:00'
+object: 活動
+subobject: 與芙蘭共賞煙火
+memory:
+  - time_slot: 早晨
+    location: 藥水店內
+    description: |
+      主人一早起來便開始備製藥水，以應付神燈節可能增加的需求。
+      芙蘭則默默清理門面，擦亮玻璃，還偷偷準備了外出便當。
+
+  - time_slot: 下午
+    location: 店內工作區與後方倉庫
+    description: |
+      芙蘭主動提出幫忙備藥草與整理儲存藥水的瓶罐。  
+      她時不時偷看主人的背影，臉上浮現期待的笑容。
+
+  - time_slot: 傍晚
+    location: 前往城市廣場的街道
+    description: |
+      兩人換上外出服後一起出發。  
+      芙蘭穿著主角為她挑選的淡粉色洋裝，因為太過女性化而害羞臉紅。  
+      路上她提著提燈，尾巴悄悄纏過主角的手臂。
+
+  - time_slot: 晚上
+    location: 城市中央廣場（神燈節主舞台）
+    description: |
+      在煙火施放的片刻，芙蘭輕輕靠在主人的肩膀上。  
+      她小聲說：「這樣的時光，能常常有就好了喵～」  
+      光影閃爍中，芙蘭的眼神閃爍著對幸福的渴望與不安。
+metadata:
+  intimacy_delta: '+1'
+  mood_fran: 靦腆、依戀
+  mood_player: 感動、安心
+tags:
+- 神燈節
+- 親密互動
+- 回憶事件
