@@ -1,0 +1,31 @@
+id: player
+type: role
+description: 主角的身分，由玩家扮演，具可變歷史與記憶空白區
+tags:
+  - 變數身分
+  - 敘事焦點
+traits:
+  - adaptable
+  - memory_loss
+  - unknown_past
+
+memory_scope:
+  known_period: 近一年
+  assumed_identity: 藥水店店長
+  memory_loss_origin: 受傷（紅眼熊事件後遺症）
+  suppressed_truth:
+    - 冒險者身分
+    - 真正劍主
+    - 戰鬥經驗與過往行跡
+  reveal_trigger: 待劇情啟動或情感積累
+  event_trigger:
+    - triggers_on:
+        - 紅眼熊事件
+        - suppressed_truth
+      trigger_effects:
+        - 產生頭痛反應，直到 reveal_trigger 解鎖
+
+
+cognition_restriction:
+  unaware_of: ["自己是冒險者", "紅眼熊事件", "與芙蘭的真實關係起點"]
+  role_locked_as: "日常系角色"

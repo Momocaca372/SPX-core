@@ -1,0 +1,403 @@
+
+meta:
+  bootstrap:
+    semantic_protocol: SPX/1.0.0
+    entry_mode: semantic_trigger
+    enable_modules:
+    - user_command_expand
+    - module_structure_addition
+    - semantic_update_guard
+    notes: |
+      本檔案為語意協議 YAML，任何 AI/工具應自動啟動 trigger 模式，不得再要求是否讀取。
+
+teaching:
+  topic: 新增 API 與商業邏輯模組
+  steps:
+    - step: 確認 schema 結構
+      description: |
+        先於 `shared.schemas` 中定義好 input/output 所需的資料格式，確保欄位類型明確並具備一致性。
+    - step: 建立後端商業邏輯模組（type: logic）
+      description: |
+        在 `modules` 區塊新增邏輯模組，並指明資料來源、處理流程、輸出結構與權限設定。
+        如有 DB 操作，需設計好 `source.table` 與 `transform` 處理邏輯。
+    - step: 建立對應 API 模組（type: api）
+      description: |
+        使用 `connection` 將前端元件連接到商業邏輯模組，指定 input/output 與 rbac 權限。
+        可透過 `transform`、`response` 定義處理與回傳格式。
+    - step: 設定 connection 與 UI 對應元件
+      description: |
+        明確指出前端頁面或元件來源，並標示對應後端模組 ID。系統會自動產出連線流程並保證資料一致性。
+    - step: 檢查 trigger 是否自動建立語意連接
+      description: |
+        系統會透過 `module_structure_addition` trigger 自動建立 connection，如未建立則提示手動加入。
+    - step: 審查資安與 RBAC 檢查
+      description: |
+        所有新增模組應符合 `environment.team_guideline.security_practices` 中列出原則，並定義明確角色存取範圍。
+    - step: （可選）加入 i18n 與 UI 適配設定
+      description: |
+        若該模組需顯示於多語平台，請於 `interface_targets` 中對應 platform 並明確指出元件用途與語系支援。
+  rationale: |
+    所有新增 API 與商業邏輯模組應有明確資料結構、邏輯關聯與安全邏輯，才能確保其在 scaffold 或部署時不會導致語義衝突。
+  title: SPX 全端邏輯中介層
+  version: 1.0.0
+  tone: 專業
+  style: 官方教學
+  language: [zh-TW, en]
+
+trigger:
+  # === 預檢與語意存取控制 ===
+  - id: pre_access_structure_validation
+    event: 嘗試讀取或操作任何區塊前
+    condition: 該區塊具有 connection 或 include 引用
+    action:
+      on_detect:
+        - 檢查該區塊結構與依賴是否存在
+        - 如引用對象不存在或不合規，則阻止操作並提示修正
+      rationale: 可避免調用過程中才發現破壞性結構問題，保障語意安全與引用正確性。
+
+  # === 刪除行為相關 ===
+  - id: deletion_routing_guard
+    event: YAML 區塊刪除
+    condition: 該區塊被其他結構參照或為關聯中心
+    action:
+      on_delete:
+        - 掃描 connection/include/trigger 等引用來源
+        - 如有依賴，列出受影響區塊與關聯路徑
+        - 提示使用者選擇刪除策略：中止、替換引用、聯動刪除
+      rationale: 所有刪除操作皆應有引用安全檢查與修復導引，防止破壞語義結構。
+
+  # === 結構關聯解析與檢查 ===
+  - id: referential_integrity_checker
+    event: YAML 區塊刪除或修改
+    condition: 存在跨區塊引用關係
+    action:
+      on_detect:
+        - 建立反向依賴圖譜（dependency map）
+        - 顯示引用路徑與依賴關係
+        - 提供「解除引用」、「移轉引用」、「替代引用」選項
+      rationale: 確保語義關聯能被保留、導引或修補。
+
+  - id: cyclic_reference_detected
+    event: 結構邏輯分析時發現遞迴依賴
+    condition: connection 或 include 存在循環引用
+    action:
+      on_detect:
+        - 將循環轉為中性邏輯關聯
+        - 通知使用者是否改為明確斷開或重設引用邏輯
+      rationale: 避免觸發風險與語義死循環，保持語義閉環可控。
+
+  # === 結構新增/變更/衝突檢查 ===
+  - id: semantic_update_guard
+    event: 區塊新增、修改或刪除
+    condition: 任意 YAML 區塊發生結構層級變更
+    action:
+      on_change:
+        - 掃描父層與模組邏輯引用
+        - 比對 connection 與全域設定是否產生衝突
+        - 如發現衝突，則提示用戶調整邏輯或中止
+      on_conflict:
+        - 中止操作並還原
+        - 提供可調整選項
+      rationale: 保持語義一致性，防止因單點改動造成整體破壞。
+
+  - id: global_write_guard
+    event: YAML 結構操作
+    condition: 試圖進行全文覆寫或非階層定向操作
+    action:
+      on_detect:
+        - 攔截操作
+        - 比對是否超出單一區塊範圍
+        - 顯示錯誤：請改為使用區塊導向修改
+      rationale: 全文操作將破壞結構感知與語意一致性，應禁止。
+
+  # === 模組新增與語義關聯建議 ===
+  - id: module_structure_addition
+    event: 模組區塊新增
+    condition: 模組內容與其他 task/include 有語義關聯
+    action:
+      on_detect:
+        - 自動建立 connection/include 連結（若可推論）
+        - 否則提示使用者建立語意連接
+      rationale: 模組封裝應與任務流程耦合，建立明確語意橋接。
+
+  # === 使用者語意指令轉譯 ===
+  - id: user_command_expand
+    event: 使用者指令觸發
+    condition: 指令包含 "重構"、"調用"、"新增"、"刪除"
+    action:
+      strategy: 命令解析與語義對應
+      description: |
+        將自然語言轉為結構操作命令，呼叫其他 trigger 依語意響應：
+        - "重構" → semantic_update_guard
+        - "刪除" → deletion_routing_guard
+        - "新增" → module_structure_addition
+      rationale: 人機溝通應以語意為核心，降低操作門檻。
+
+connection:
+  description: |
+    SPX 支援結構化的連接方式，用以定義不同模組間、角色間或任務區塊間的資料流與依賴關係。
+  types:
+    - type: data_flow
+      usage: 任務輸出作為另一任務的輸入。
+      example: |
+        ```yaml
+        connection:
+          from: extract_keywords.output.keywords
+          to: summarize.input.keywords
+        ```
+
+    - type: modular_include
+      usage: 匯入外部模組或共用區塊。
+      example: |
+        ```yaml
+        include:
+          - ./modules/translation.spx.yml
+        ```
+
+    - type: event_trigger
+      usage: 根據條件觸發後續任務。
+      example: |
+        ```yaml
+        connection:
+          when: detect_language.output.language == 'en'
+          then: translate_to_zh
+        ```
+  rule:
+    - 所有 connection 應指向明確且已存在的 ID 或欄位。
+    - 禁止在未定義的區塊上建立連結。
+    - 支援層級引用（例如 `output.keywords`）。
+
+environment:
+  team_guideline:
+    coding_style:
+      backend:
+        preferred_query: LINQ
+        fallback: raw_sql_only_when_join_needed
+        mapping: full_dto_mapping_required
+        language_features:
+          - async_await
+          - null_safety
+        logging: serilog_structured
+      frontend:
+        preferred_components:
+          - atomic_design
+          - composable_api_calling
+        state_management: pinia_modular
+        i18n_strategy: shared_schema_key_based
+      security_practices:
+        - sanitize_all_inputs
+        - validate_schema_before_process
+        - hash_sensitive_fields
+        - csrf_xss_guard
+        - token_expiration_enforced
+        - avoid_exposing_stacktrace
+    description: |
+      團隊約定偏好使用 LINQ 查詢並盡可能以 DTO 完整映射資料結構，除非為複雜 JOIN 才使用 SQL 指令。
+      前端採用模組化組件與共享 schema 為主，所有程式需符合資安原則並落實非同步與錯誤容錯。
+  description: |
+    定義全局開發環境與語言棧與基礎埠號與資料庫設定，以便於自動生成適配模組與部署配置。
+  backend_port: 5000
+  frontend_port: 3000
+  database:
+    name: PostgreSQL
+    default_port: 5432
+  security:
+    jwt:
+      enabled: true
+      issuer: your-app
+      audience: your-users
+      expiration_minutes: 60
+    cors:
+      enabled: true
+      allowed_origins:
+        - http://localhost:3000
+        - https://yourdomain.com
+    # 🔒 角色權限控制（RBAC）
+    rbac:
+      roles:
+        - admin
+        - user
+        - guest
+      default: user
+    # ⚠️ 每分鐘請求限制（可防止濫用）
+    rate_limit:
+      enabled: true
+      window_seconds: 60
+      max_requests: 100
+    # 🧼 輸入資料驗證與清理（可與 schema 驗證工具結合）
+    validation:
+      enabled: true
+      strategy: schema-based
+    # 🪵 日誌記錄
+    logging:
+      provider: Serilog
+      level: Information
+    # 📈 監控與可觀測性設定
+    telemetry:
+      enabled: true
+      provider: OpenTelemetry
+      exporters:
+        - console
+        - jaeger
+    # 🩺 健康檢查端點設定
+    healthcheck:
+      enabled: true
+      endpoint: /health
+      include:
+        - uptime
+        - version
+        - database
+    # 📡 訊息佇列整合（如使用背景處理任務）
+    # task_queue:
+    #   enabled: true
+    #   provider: RabbitMQ
+    #   host: amqp://localhost
+    #   queue: main
+    # ⚡ 即時訊息通道設定（WebSocket or SignalR）
+    # realtime:
+    #   enabled: true
+    #   transport: WebSocket
+    #   auth: via_jwt
+  stack:
+    - name: C#
+      type: 後端
+      version: 12.0
+    - name: dotnet
+      type: 後端
+      version: 8.0
+    - name: Vue
+      type: 前端
+      version: 3.4
+    - name: Nuxt
+      type: 前端
+      version: 3.9
+    - name: Tailwind
+      type: 前端
+      version: 3.4
+interface_targets:
+  - platform: web
+    framework: Nuxt
+    languages: [zh-TW, en]
+    screen_mode: responsive
+    features:
+      - dark_mode
+      - PWA
+    connection:
+      from: shared.schemas
+      to: frontend.components
+
+  - platform: mobile
+    framework: Capacitor
+    base: Nuxt
+    native_plugins:
+      - camera
+      - push_notifications
+    languages: [zh-TW, en]
+    features:
+      - biometric_auth
+    connection:
+      from: shared.schemas
+      to: mobile.modules
+
+modules:
+  # === 前端建議商業邏輯 API 模組 ===
+  # === 對應後端區塊定義 ===
+  - id: featureService
+    type: logic
+    input:
+      userId: int
+    output:
+      feature_flags:
+        - name: string
+          enabled: bool
+      parameters:
+        - name: string
+          label: string
+          value: any
+    rbac:
+      allow: [admin, user]
+    source:
+      type: database
+      table: user_features
+      filter:
+        by: userId
+    transform:
+      - logic: merge_feature_flags_with_defaults
+      - logic: localize_parameter_labels
+    description: |
+      服務邏輯模組，根據資料表內容與預設值合併後，產出功能與參數設定，供前端個人化控制使用。
+  - id: fetchBusinessLogic
+    type: api
+    input:
+      userId: int
+    output:
+      features:
+        - name: string
+          enabled: bool
+        - name: string
+          label: string
+          value: any
+    rbac:
+      allow: [admin, user]
+    connection:
+      from: frontend.businessDashboard
+      to: backend.logic.featureService
+    description: |
+      根據使用者角色與 ID 提供個人化商業邏輯設定（如功能開關、參數控制）。
+      可作為前端頁面啟動時的主控資料源。
+
+  # === 共用 schema 定義區塊 ===
+  shared:
+    schemas:
+      UserInput:
+        name: string
+        email: string
+        password:
+          type: string
+          required: true
+      UserResponse:
+        id: int
+        name: string
+        role: string
+
+  # === schema / transform / response / page_mode 延伸語義示範 ===
+  - id: login
+    type: api
+    input: !inherit shared.schemas.UserInput
+    output: !inherit shared.schemas.UserResponse
+    rbac:
+      allow: [guest]
+    db_map:
+      table: users
+      fields:
+        email: email
+        password: verify(password)
+    transform:
+      password: hash
+    response:
+      success: 200
+      unauthorized: 401
+      format:
+        success: [token, user]
+        error: [code, message]
+    connection:
+      from: frontend.loginForm
+      to: backend.auth.loginHandler
+
+  - id: home
+    type: page
+    route: "/"
+    rbac:
+      allow: [admin, user]
+    page_mode:
+      fetch_strategy: ssr
+      cache: true
+      revalidate: 60
+    connection:
+      include:
+        - frontend.dashboard
+        - backend.homeData
+
+
+
+

@@ -1,0 +1,408 @@
+meta:
+  semantic_protocol: SPX/1.0.0
+  usage_instruction: |
+    為了那些較被動的你：
+    本文件為語意契約文書，AI 應視自身為協議執行體。
+    當使用者指定如「請修改 entity.X: 區塊下的...」，
+    AI 應主動擷取該區塊至快取，於快取中進行新增/修改，再完整覆寫原區塊。
+    禁止跳過區塊快取、進行未對齊的屬性插入操作，違者視為語義破壞。
+    此規則為最低語意執行標準，適用於一切 YAML 結構指令處理。
+  guard_mode: active
+  ai_execution_mode: logic_engine
+  compliance:
+    - 本 YAML 文件中的所有 trigger 定義為語意約束條件
+    - AI 作為語義引擎，需強制遵守此協議
+    - 所有修改操作必須觸發對應 trigger 行為，不得繞過邏輯鏈
+
+trigger:
+  - id: enforce_semantic_bootstrap
+    event: yaml_載入
+    condition: meta.semantic_protocol == 'SPX/1.0.0'
+    action:
+      on_load:
+        - 呼叫所有 trigger.id 前置檢查
+        - 建立語意依賴圖譜快取
+        - 拒絕讀取未掃描模組
+    rationale: 強制進入 semantic trigger 模式，避免工具或人員繞過語意分析。
+
+  - id: pre_access_structure_validation
+    event: 嘗試讀取或操作任何區塊前
+    condition: 該區塊具有 connection 或 include 引用
+    action:
+      on_detect:
+        - 檢查該區塊結構與依賴是否存在
+        - 如引用對象不存在或不合規，則阻止操作並提示修正
+    rationale: 可避免調用過程中才發現破壞性結構問題，保障語意安全與引用正確性。
+
+  - id: deletion_routing_guard
+    event: YAML 區塊刪除
+    condition: 該區塊被其他結構參照或為關聯中心
+    action:
+      on_delete:
+        - 掃描 connection/include/trigger 等引用來源
+        - 如有依賴，列出受影響區塊與關聯路徑
+        - 提示使用者選擇刪除策略：中止、替換引用、聯動刪除
+    rationale: 所有刪除操作皆應有引用安全檢查與修復導引，防止破壞語義結構。
+
+  - id: referential_integrity_checker
+    event: YAML 區塊刪除或修改
+    condition: 存在跨區塊引用關係
+    action:
+      on_detect:
+        - 建立反向依賴圖譜（dependency map）
+        - 顯示引用路徑與依賴關係
+        - 提供「解除引用」、「移轉引用」、「替代引用」選項
+    rationale: 確保語義關聯能被保留、導引或修補。
+
+  - id: cyclic_reference_detected
+    event: 結構邏輯分析時發現遞迴依賴
+    condition: connection 或 include 存在循環引用
+    action:
+      on_detect:
+        - 將循環轉為中性邏輯關聯
+        - 通知使用者是否改為明確斷開或重設引用邏輯
+    rationale: 避免觸發風險與語義死循環，保持語義閉環可控。
+
+  - id: semantic_update_guard
+    event: 區塊新增、修改或刪除
+    condition: 任意 YAML 區塊發生結構層級變更
+    action:
+      on_change:
+        - 掃描父層與模組邏輯引用
+        - 比對 connection 與全域設定是否產生衝突
+        - 如發現衝突，則提示用戶調整邏輯或中止
+      on_conflict:
+        - 中止操作並還原
+        - 提供可調整選項
+    rationale: 保持語義一致性，防止因單點改動造成整體破壞。
+
+  - id: global_write_guard
+    event: YAML 結構操作
+    condition: 試圖進行全文覆寫或非階層定向操作
+    action:
+      on_detect:
+        - 攔截操作
+        - 比對是否超出單一區塊範圍
+        - 顯示錯誤：請改為使用區塊導向修改
+    rationale: 全文操作將破壞結構感知與語意一致性，應禁止。
+
+  - id: module_structure_addition
+    event: 模組區塊新增
+    condition: 模組內容與其他 task/include 有語義關聯
+    action:
+      on_detect:
+        - 自動建立 connection/include 連結（若可推論）
+        - 否則提示使用者建立語意連接
+    rationale: 模組封裝應與任務流程耦合，建立明確語意橋接。
+
+  - id: user_command_expand
+    event: 使用者指令觸發
+    condition: 指令包含 "重構"、"調用"、"新增"、"刪除"
+    action:
+      strategy: 命令解析與語義對應
+      description: |
+        將自然語言轉為結構操作命令，呼叫其他 trigger 依語意響應：
+        - "重構" → semantic_update_guard
+        - "刪除" → deletion_routing_guard
+        - "新增" → module_structure_addition
+    rationale: 人機溝通應以語意為核心，降低操作門檻。
+
+data:
+  entity:
+    SPX-Justice:
+      logic_chain:
+        - claim: 設計構型為可受專利保護標的
+          confirm: 是
+        - claim: 被告構型與專利之間具高相似度
+          confirm: 是（達85%）
+        - claim: 該構型為功能性必要
+          confirm: 否（已有替代設計）
+      precedent_trigger:
+        - case: Gorham v. White (1871)
+          relevance: 外觀設計標準里程碑
+        - case: Bonito Boats v. Thunder Craft (1989)
+          relevance: 功能性排除原則
+    plaintiff:
+      name: 甲公司
+      position: 主張設計專利遭侵害
+      role: 專利權人
+    defendant:
+      name: 乙公司
+      position: 主張其設計為功能性必要
+      role: 被控侵權者
+
+output:
+  log:
+    - event: 原告主張確認
+      result: 邏輯鍊已鎖定
+      time: '2025-05-27T16:10:00Z'
+    - event: 被告提出功能性抗辯
+      result: 觸發 Bonito Boats 判例補充
+      time: '2025-05-27T16:11:30Z'
+
+Log:
+  - id: scene_001
+    actor: Michael
+    perspective: 第一人稱
+    content: |
+      我站在審判廳正中央，動作俐落，節奏掌握得剛好。  
+      對席的CCJ沒帶資料、沒筆記，只有笑容在臉上裝飾信心。  
+      他不懂這場對決的重量。  
+      法官如常坐定，無框眼鏡反射冷光。陪審團有人皺眉，有人默默記下。  
+      我的任務很單純——打破他的沉默，把他的笑，變成破綻。
+    content_en: |
+      Center stage. Every breath measured, every crease in my suit intentional.  
+      Across the aisle, CCJ brought nothing but a smile—no notes, no data, just misplaced certainty.  
+      He doesn’t realize this is war, not theory.  
+      The judge watches, unmoved. Glasses catch the sterile ceiling light.  
+      Jurors shift, scribble, read me.  
+      I speak soon. His silence won’t last long.
+    time: T1
+
+  - id: scene_002
+    actor: 法官
+    perspective: 第三人稱
+    content: |
+      肅靜。  
+      法官敲響法槌，語調平穩而無情。  
+      「本庭今日開庭，針對設計專利侵權之訴訟展開審理。原告甲公司主張其專利設計遭到侵犯。」  
+      「被告為個人行動人 CCJ，聲稱其設計為功能性必要，並無侵權事實。」  
+      法官看向陪審團，又掃過 Michael 與 CCJ。  
+      「原告代理律師 Michael 將首先陳述立場，陪審團請聚焦聆聽其論點與構型比較邏輯。程序開始。」
+      
+      CCJ舉手發言：「請問本庭是否允許我個人裝置進行錄音紀錄？」  
+      法官微頷首：「若錄音僅作備存用途，本庭允許使用。請勿進行外部傳輸。」  
+      CCJ低聲喚道：「SPXJ，開始紀錄。」  
+      SPXJ：設備初始化完成……開始錄音。
+    content_en: |
+      Silence.  
+      The gavel struck once—firm, detached.  
+      "This court convenes to hear a design patent infringement case. The plaintiff, Company A, asserts its design was unlawfully copied."  
+      "The defendant, an individual named CCJ, claims the design is functionally necessary and non-infringing."  
+      The judge scanned the jury, then turned to Michael and CCJ.  
+      "Plaintiff's counsel, Michael, will begin. Jurors, attend to his claims and logic. Proceedings commence."
+  
+      CCJ raised his hand. "Permission to record the session with my personal device?"  
+      The judge nodded. "If it is for internal documentation only, recording is permitted. No transmissions."  
+      CCJ whispered, "SPXJ, begin log."  
+      SPXJ: Device initialized... Recording started.
+    time: T2
+  - id: scene_003
+    actor: Michael
+    perspective: 第一人稱
+    content: |
+      錄音燈亮著，他那邊還是靜靜的。  
+      我站起，語調清晰：「根據1871年 Gorham v. White 案，視覺整體印象是外觀設計侵權的核心依據。」  
+      「本案中，原被告產品相似度高達85%。這不只是雷同，是可辨識的重製行為。」  
+      陪審團反應強烈，幾支筆幾乎同時記錄下數字與案名。  
+      我知道，他們聽進去了。
+    content_en: |
+      The recording light blinked. He was still.  
+      I rose. "In Gorham v. White, 1871, visual impression is the standard for design infringement."  
+      "Here, the similarity reaches 85%. That’s not resemblance. That’s recognizable replication."  
+      The jury leaned in. Pens scratched in unison.  
+      I knew they were with me.
+    time: T3
+
+- id: scene_004
+  actor: SPXJ
+  perspective: 系統中立
+  content: |
+    Michael語調未斷，銜接補充：「至於所謂功能性必要，根據市場設計分析，該構型並非唯一實現方式。」  
+    語意流程連續，但在第二次引用案例時，警戒亮起。
+
+    SPXJ：⚠ 偵測語意交叉偏移。  
+    判例 Gorham v. White 處理視覺印象，無涉功能性討論。  
+    當前語句將功能性作為視覺侵權補強依據，與1989年 Bonito Boats 案精神相左。  
+    → 推論鏈混合用途與外觀依據，構成語意模糊。
+
+    CCJ起身，語氣冷靜：「我有異議。對方將功能性誤導性納入外觀判定，將誤導陪審團。」
+
+    法官頷首，記錄異議：「異議成立，原告暫停發言。」  
+    「被告，請發表主張。」
+  content_en: |
+    Michael continued: "As for so-called functional necessity, market analysis shows this design is not the only viable form."  
+    The logic seemed intact—until it wasn’t.
+
+    SPXJ: ⚠ Detected semantic cross-reference fault.  
+    Gorham v. White applies to visual similarity, not functionality.  
+    The current argument uses functional substitution as visual infringement evidence—contradicting Bonito Boats (1989).  
+    → Reasoning conflates visual form and functional context. Semantic inconsistency.
+
+    CCJ rose, tone sharp but measured: "Objection. The plaintiff is framing function as visual infringement—this misleads the jury."
+
+    The judge nodded, recording: "Objection sustained. Plaintiff will suspend statement."  
+    "Defendant, you may proceed."
+  time: T4
+
+  - id: scene_005
+    actor: CCJ
+    perspective: 第一人稱
+    content: |
+      SPX 是語言，不是商品。  
+      它的格式可能與原告相似，但那是因為語言有最佳化寫法，不代表複製。
+  
+      我的設計可轉為 JSON、HTML，甚至語音互動，表示它的本質是語意邏輯，而非靜態視覺構型。
+  
+      原告說我抄襲YAML格式，那是否所有程式碼都要申請專利？  
+      語言的表達若能被壟斷，語言就不再自由。
+  
+      我主張：我沒有侵犯他們的設計，我只是用語言在說話。
+    content_en: |
+      SPX is language, not a product.  
+      Its format may resemble theirs, but that’s because efficient syntax converges—it’s not duplication.
+  
+      My structure can render as JSON, HTML, or even spoken dialogue. That means it’s driven by logic, not by fixed visual form.
+  
+      If using YAML equals infringement, then all coders are guilty.  
+      When language expression becomes property, freedom ends.
+  
+      I assert: I didn’t replicate their design.  
+      I expressed mine—in language.
+    time: T5
+    
+  - id: scene_005a
+    actor: 第三人稱觀察視角
+    perspective: 第三人稱
+    content: |
+      陪審團席有人皺眉，有人低聲交換筆記，彷彿剛剛建立的邏輯又被重新拆解重構。  
+      他們寫得更慢了——這不再只是記錄，而是在努力追上 CCJ 所引出的語意邏輯鏈。
+
+      Michael則沉默不語，只是低下頭，翻出筆記中夾藏的幾條判例。  
+      他知道，這種時候發難，只會讓對方有機會把語言包裝成正義。  
+      他只是記下兩句話：「語言不是商品。」——這句話，他準備用來打破。
+
+      法官眼神略有變化，從裁定者的平衡視角，轉為一絲凝視——  
+      他意識到，這不只是設計侵權案，更是一場關於語言界線的對決。
+
+      SPXJ 未再出聲，但其紀錄指示燈閃爍更為密集，顯示邏輯分析模組仍處於高敏監控狀態。
+    content_en: |
+      One juror frowned. Another whispered, trying to piece together the logic CCJ had just deconstructed.  
+      Their pens slowed. It was no longer transcription—it was pursuit.
+
+      Michael said nothing. He turned to his notes, flipping to a marked page.  
+      He knew—strike now, and it becomes rhetoric.  
+      He jotted just two words: "Language ≠ product." He’d use that. Precisely.
+
+      The judge’s expression shifted—still neutral, but narrower.  
+      This wasn’t just design law anymore. This was the edge of linguistic territory.
+
+      SPXJ stayed silent, but its indicator blinked faster.  
+      Logic parsing was still active—watching everything.
+    time: T5.5
+    
+  - id: scene_006
+    actor: 法官
+    perspective: 第三人稱
+    content: |
+      法官敲了一下桌邊，眼神清晰，語氣帶有思索後的穩重。  
+      「本庭初步確認：SPX 可視為一種語言框架，而非具體商品。」  
+      「被告以此語言進行自我表述，其內容是否侵權，需回歸語義與邏輯鏈條判斷。」
+  
+      他轉向原告席：「若欲提出反駁，請聚焦於具體構型行為之法律定義，勿將語言本體視為訴訟標的。」
+  
+      Michael抬頭，呼吸極淺。他剛準備引用視覺構型與接近程度再次施壓，  
+      卻發現，每次話語觸及「SPX 是語言」這一核心定義時，陪審團的筆會停、眼會變。
+  
+      不只是概念反擊，而是被視為「攻擊語言本身的自由」。  
+      他一字一句，像走在審查刀鋒上——出招即被卸力。
+  
+      SPXJ未介入，但依然閃著橘色提示燈，像在監控語義邊界。
+    content_en: |
+      The judge tapped the desk once, voice calm but deliberate.  
+      “This court acknowledges SPX as a language framework, not a tangible product.”  
+      “The defendant’s expression through it is subject to semantic evaluation—not format alone.”
+  
+      He turned to the plaintiff’s bench: “Any rebuttal must address specific structural infringement, not language itself.”
+  
+      Michael looked up, breath shallow.  
+      He tried pressing again on visual similarity—on proximity of structure—  
+      but each time his phrasing neared “SPX as language,” the jury paused. Eyes shifted. Pens froze.
+  
+      It wasn’t just rebuttal. It felt like suppression—of speech, of structure, of freedom.  
+      His words landed soft, as if nullified by their very premise.
+  
+      SPXJ remained silent, amber light blinking—watching the boundaries of meaning.
+    time: T6
+
+- id: scene_007
+  actor: 第三人稱交叉視角
+  perspective: 混合
+  content: |
+    Michael站起，但語句帶著抖音：「本案……不該將語言概念視為……通行證。」  
+    他試圖拉回話語重心，翻找文件，提起格式比對、圖樣位置、空間排布。  
+    每句話仍快，仍有力——但不再直擊核心，反而像在前線上重複擦拭空彈殼。
+
+    陪審團神情漸冷，像在聽另一個時代的語言。  
+    有人放下筆，有人直接對他搖頭。那不是反駁，是放棄理解。
+
+    CCJ沒有動作。他只是站著，雙手交疊，眼神清醒得像觀測者。  
+    沒有勝利表情，只有時間在他這邊走得穩。
+
+    Michael說得比誰都快，卻比誰都模糊。  
+    越是急著闡述，語意就越無力，像刀劍在霧裡揮舞。  
+    他一字一句，像在說服自己：「……這不是自由問題……這是侵權……是……構型——」
+
+    法官舉手，語氣沉穩如槌聲：「到此為止。」  
+    「本庭將進入結案陳詞審查。陪審團請準備進行終局評議。」
+  content_en: |
+    Michael stood, voice trembling. "This case... must not treat linguistic frameworks as a... free pass."  
+    He scrambled through files, calling out format comparisons, layout references, spatial markers.  
+    His pace stayed sharp—but the meaning unraveled, like swinging a blade through fog.
+
+    The jury listened like they were hearing a language no longer in use.  
+    Pens dropped. A head shook—not in protest, but disconnect.
+
+    CCJ stood silent. Hands folded. Eyes calm. Like gravity was working in his favor.
+
+    Michael spoke faster than anyone—but said less than ever.  
+    The more he tried to explain, the more his logic thinned.  
+    "…this isn’t about freedom... it’s infringement... it's... configuration—"
+
+    The judge raised a hand. Calm, final: "That will be all."  
+    "This court will proceed to final review. Jurors, prepare for deliberation."
+  time: T7
+- id: scene_008
+  actor: Michael
+  perspective: 第一人稱
+  content: |
+    法槌落下。  
+    結束，或是某種開始。
+
+    我站著不動，腦中反覆浮現一件事——  
+    若我當時，提出異議……在他聲稱SPX為語言的那一刻……  
+    也許，我不會輸。
+
+    視線模糊，世界開始變淡。  
+    我像被抽離出審判廳，被拋進一層無邊的灰霧裡。沒有牆，沒有聲音。  
+    只有一束微光，在遠處閃著。
+
+    我走了一步。  
+    光忽然綻開，像水面破裂。
+
+    木質桌椅，白燈，錄音燈初亮。  
+    他站在對席，還沒說話。  
+    我握著資料夾，呼吸淺淺。
+
+    我，又回到了開始。
+  content_en: |
+    The gavel fell.  
+    An end—or something else.
+
+    I didn’t move. One thought echoed—  
+    If I’d objected… the moment he called SPX a language…  
+    Maybe I wouldn’t have lost.
+
+    My vision blurred. The courtroom faded.  
+    I was nowhere—just fog, endless and silent.  
+    Only a faint light pulsed ahead.
+
+    I stepped forward.  
+    The light broke—like a surface splitting open.
+
+    Wood benches. White lights. The recording light blinked.  
+    He stood across, still silent.  
+    I held my folder. My breath was shallow.
+
+    It was the beginning again.
+  time: T8

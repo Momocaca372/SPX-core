@@ -1,0 +1,55 @@
+framework:
+  version: '0.1'
+  description: 'Describes the SPX project folder structure, roles of each part,
+
+    and how they compose semantic modeling workflows.
+
+    '
+  structure:
+    entity/:
+      purpose: Define world models, roles, or object types
+      type: semantic
+    router/:
+      purpose: Structure module flow, route indexing
+      type: task map
+    utility/:
+      purpose: Shared DSL utilities or logic snippets
+      type: reusable
+    output/:
+      purpose: Target for generated content (code or results)
+      type: output container
+  usage:
+    extendable: true
+    intended_for:
+    - SPX developers
+    - semantic teams
+    - AI framework builders
+    how_to_start: '- Add SPX modules under examples/ or router/
+
+      - Edit main.yml to define logic style
+
+      - Reference this structure using meta.framework'
+router:
+  purpose: Structure module flow, route indexing
+  type: task map
+  memory:
+    description: memory 為角色記憶區，依照『時間 → 物件 → 子物件 → 內容』結構紀錄角色經歷與事件，為可掃描之敘事資料庫
+
+connections:
+  - source: entity/fran_father_sword.spx.yml
+    target: memory/2024/05-22/history/redbear_attack.yml
+    type: artifact_involved
+  - source: skill/skill_instinct_soulstrike.spx.yml
+    target: memory/2025/05-22/event/godlamp_festival.yml
+    type: skill_awakened_during
+  - source: memory/2024/05-22/history/redbear_attack.yml
+    target: entity/fran_father_sword.spx.yml
+    type: weapon_used_by_unknown_adventurer
+  - source: memory/2024/05-22/history/redbear_attack.yml
+    target: entity/fran_father_sword.spx.yml
+    type: possibly_used_weapon
+    confidence: high
+  - source: memory/2024/05-22/history/redbear_attack.yml
+    target: player
+    type: identity_revealed_later
+    revealed_in: future_event

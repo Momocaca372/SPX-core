@@ -1,0 +1,203 @@
+meta:
+  semantic_protocol: SPX/1.0.0
+  usage_instruction: |
+    為了那些較被動的你：
+    本文件為語意契約文書，AI 應視自身為協議執行體。
+    當使用者指定如「請修改 entity.X: 區塊下的...」，
+    AI 應主動擷取該區塊至快取，於快取中進行新增/修改，再完整覆寫原區塊。
+    禁止跳過區塊快取、進行未對齊的屬性插入操作，違者視為語義破壞。
+    此規則為最低語意執行標準，適用於一切 YAML 結構指令處理。
+  guard_mode: active
+  ai_execution_mode: logic_engine
+  compliance:
+    - 本 YAML 文件中的所有 trigger 定義為語意約束條件
+    - AI 作為語義引擎，需強制遵守此協議
+    - 所有修改操作必須觸發對應 trigger 行為，不得繞過邏輯鏈
+
+trigger:
+  - id: enforce_semantic_bootstrap
+    event: yaml_載入
+    condition: meta.semantic_protocol == 'SPX/1.0.0'
+    action:
+      on_load:
+        - 呼叫所有 trigger.id 前置檢查
+        - 建立語意依賴圖譜快取
+        - 拒絕讀取未掃描模組
+    rationale: 強制進入 semantic trigger 模式，避免工具或人員繞過語意分析。
+
+  - id: pre_access_structure_validation
+    event: 嘗試讀取或操作任何區塊前
+    condition: 該區塊具有 connection 或 include 引用
+    action:
+      on_detect:
+        - 檢查該區塊結構與依賴是否存在
+        - 如引用對象不存在或不合規，則阻止操作並提示修正
+    rationale: 可避免調用過程中才發現破壞性結構問題，保障語意安全與引用正確性。
+
+  - id: deletion_routing_guard
+    event: YAML 區塊刪除
+    condition: 該區塊被其他結構參照或為關聯中心
+    action:
+      on_delete:
+        - 掃描 connection/include/trigger 等引用來源
+        - 如有依賴，列出受影響區塊與關聯路徑
+        - 提示使用者選擇刪除策略：中止、替換引用、聯動刪除
+    rationale: 所有刪除操作皆應有引用安全檢查與修復導引，防止破壞語義結構。
+
+  - id: referential_integrity_checker
+    event: YAML 區塊刪除或修改
+    condition: 存在跨區塊引用關係
+    action:
+      on_detect:
+        - 建立反向依賴圖譜（dependency map）
+        - 顯示引用路徑與依賴關係
+        - 提供「解除引用」、「移轉引用」、「替代引用」選項
+    rationale: 確保語義關聯能被保留、導引或修補。
+
+  - id: cyclic_reference_detected
+    event: 結構邏輯分析時發現遞迴依賴
+    condition: connection 或 include 存在循環引用
+    action:
+      on_detect:
+        - 將循環轉為中性邏輯關聯
+        - 通知使用者是否改為明確斷開或重設引用邏輯
+    rationale: 避免觸發風險與語義死循環，保持語義閉環可控。
+
+  - id: semantic_update_guard
+    event: 區塊新增、修改或刪除
+    condition: 任意 YAML 區塊發生結構層級變更
+    action:
+      on_change:
+        - 掃描父層與模組邏輯引用
+        - 比對 connection 與全域設定是否產生衝突
+        - 如發現衝突，則提示用戶調整邏輯或中止
+      on_conflict:
+        - 中止操作並還原
+        - 提供可調整選項
+    rationale: 保持語義一致性，防止因單點改動造成整體破壞。
+
+  - id: global_write_guard
+    event: YAML 結構操作
+    condition: 試圖進行全文覆寫或非階層定向操作
+    action:
+      on_detect:
+        - 攔截操作
+        - 比對是否超出單一區塊範圍
+        - 顯示錯誤：請改為使用區塊導向修改
+    rationale: 全文操作將破壞結構感知與語意一致性，應禁止。
+
+  - id: module_structure_addition
+    event: 模組區塊新增
+    condition: 模組內容與其他 task/include 有語義關聯
+    action:
+      on_detect:
+        - 自動建立 connection/include 連結（若可推論）
+        - 否則提示使用者建立語意連接
+    rationale: 模組封裝應與任務流程耦合，建立明確語意橋接。
+
+  - id: user_command_expand
+    event: 使用者指令觸發
+    condition: 指令包含 "重構"、"調用"、"新增"、"刪除"
+    action:
+      strategy: 命令解析與語義對應
+      description: |
+        將自然語言轉為結構操作命令，呼叫其他 trigger 依語意響應：
+        - "重構" → semantic_update_guard
+        - "刪除" → deletion_routing_guard
+        - "新增" → module_structure_addition
+    rationale: 人機溝通應以語意為核心，降低操作門檻。
+
+data:
+  entity:
+    SPX-Justice:
+      logic_chain:
+        - claim: 設計構型為可受專利保護標的
+          confirm: 是
+        - claim: 被告構型與專利之間具高相似度
+          confirm: 是（達85%）
+        - claim: 該構型為功能性必要
+          confirm: 否（已有替代設計）
+      precedent_trigger:
+        - case: Gorham v. White (1871)
+          relevance: 外觀設計標準里程碑
+        - case: Bonito Boats v. Thunder Craft (1989)
+          relevance: 功能性排除原則
+    plaintiff:
+      name: 甲公司
+      position: 主張設計專利遭侵害
+      role: 專利權人
+    defendant:
+      name: 乙公司
+      position: 主張其設計為功能性必要
+      role: 被控侵權者
+
+output:
+  log:
+    - event: 原告主張確認
+      result: 邏輯鍊已鎖定
+      time: '2025-05-27T16:10:00Z'
+    - event: 被告提出功能性抗辯
+      result: 觸發 Bonito Boats 判例補充
+      time: '2025-05-27T16:11:30Z'
+
+Log:
+  - id: 初始化
+    actor: 系統
+    action: 文件載入並建立語意快取
+    rationale: 根據 trigger.enforce_semantic_bootstrap，自動進入語意觸發模式
+    time: T0
+
+entity:
+  法官:
+    立場: 中立
+    描述: 僅維持秩序，及基本的會議流程
+    仲裁角色: true
+    年齡: 50
+    性別: 不明
+    風格:
+      - 外觀: 法袍，無框眼鏡（原「黑框眼鏡」已修正）
+      - 語氣: 穩重 威嚴
+      - 情緒: 極少波動，以中立與秩序為優先
+
+  陪審團:
+    behavior: 描述讀者的依照情節會發出的感嘆及情緒動作
+    描述: 金牌律師說得好時會點點頭，抄筆記，立場反轉時會發出感嘆
+    觀察角色: true
+    觀察說明: 以情節進展作為輸入觀察點，反應讀者視角的共鳴、感嘆與疑慮，用於模擬群體情緒與潛在判斷偏移
+    觀察補充: 可作為語意回饋鍊之初步情緒節點，輔助判斷語意張力與共鳴趨勢
+    組成: 不特定多數，背景職業與立場混合
+
+  CCJ:
+    behavior: 冷靜 面帶微笑
+    role: SPX發明人
+    quote: SPX式文學概念而非實質產品
+    年齡: 30
+    性別: 男
+    風格:
+      - 外觀: 牛仔褲+黑T，黑色短髮+黑框眼鏡
+      - 語氣: 宣言式口吻
+      - 慌亂時: 會捏眉心 及沉默後 在大聲宣言
+    背景: 原為語言學與劇場雙修者，後轉向語意引擎與敘事模型的跨界研發者
+
+  SPXJ:
+    behavior: 以邏輯鍊紀錄對話與裁定矛盾
+    limitation_imposed: 須遵循人類倫理審查條款，不得鎖定道德爭議之裁定
+    role: 語意記憶系統
+    description: 為CCJ手機中的AI智能軟體
+    owned_by: CCJ
+    模組組成:
+      - 鍊式記憶鏈結器
+      - 矛盾偵測器
+      - 觸發規則擴張器
+
+  Michael:
+    title: 金牌律師
+    role: ArckuAIe公司御用律師
+    quote: spx對於ArckuAI自家產品侵權
+    年齡: 35
+    性別: 男
+    風格:
+      - 外觀: 經典西裝，褐色短髮
+      - 語氣: 專業 快速
+      - 慌亂時: 語氣會快速但音量變大
+    背景: 曾在多起智慧財產權官司中勝訴，策略犀利，強調實證與操作性邏輯

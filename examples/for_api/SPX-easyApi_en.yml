@@ -1,0 +1,205 @@
+api:
+  meta:
+    name: UserService
+    type: api
+    description: Supports CREATE, UPDATE, DELETE, FINDBYID, and viewFriendsById functionality.
+    tags:
+      - user
+      - auth
+      - crud
+      - demo
+    author: 建程
+    version: 0.1.0
+    visibility: internal
+    category: user-management
+    input_type: json
+    output_type: json
+    frontend_hint:
+      preferred_component: form
+      auto_generate: true
+    ai_guide:
+      goal: Build reactive fullstack CRUD service with auth
+      avoid: duplicate ID creation
+      enforce_trigger: true
+      rationale: All defined triggers must be interpreted and executed by the AI assistant as binding semantic rules.
+      
+  trigger: 
+    - id: pre_access_structure_validation
+      event: Before attempting to read or operate on any block
+      condition: The block has connection or include references
+      action:
+        on_detect:
+          - Check whether the block structure and dependencies exist
+          - If referenced objects are missing or invalid, block operation and prompt for correction
+        rationale: Prevent destructive structural issues during runtime, ensuring semantic and reference safety.
+
+    - id: deletion_routing_guard
+      event: YAML block deletion
+      condition: The block is referenced or is a central node
+      action:
+        on_delete:
+          - Scan for connection/include/trigger references
+          - If found, list affected blocks and paths
+          - Prompt user with delete strategies: abort, reassign, or cascade delete
+        rationale: All deletions should include reference safety checks and guidance.
+
+    - id: referential_integrity_checker
+      event: YAML block deletion or modification
+      condition: Cross-block references exist
+      action:
+        on_detect:
+          - Build a reverse dependency map
+          - Show reference paths and dependencies
+          - Offer options: unlink, migrate, or substitute references
+        rationale: Preserve or correct semantic relationships.
+
+    - id: cyclic_reference_detected
+      event: Structural logic analysis detects recursion
+      condition: Circular references in connection or include
+      action:
+        on_detect:
+          - Neutralize the cycle with a neutral reference logic
+          - Notify user to either break or redefine reference logic
+        rationale: Prevent semantic infinite loops and retain control.
+
+    - id: semantic_update_guard
+      event: Block addition, update, or deletion
+      condition: Structural changes to any YAML block
+      action:
+        on_change:
+          - Scan parent and module logic references
+          - Compare with connection/global settings for conflicts
+          - If conflict found, prompt user to resolve or abort
+        on_conflict:
+          - Abort operation and rollback
+          - Provide adjustment options
+        rationale: Maintain semantic integrity and prevent wide-scale disruptions.
+
+    - id: global_write_guard
+      event: YAML structure operation
+      condition: Attempting full overwrite or non-hierarchical edit
+      action:
+        on_detect:
+          - Intercept the operation
+          - Validate scope within a single block
+          - Display error: use block-scoped edits only
+        rationale: Full overwrite disrupts structure-awareness and semantic consistency.
+
+    - id: module_structure_addition
+      event: Module block added
+      condition: Module has semantic relation to other task/include
+      action:
+        on_detect:
+          - Auto-link with connection/include if inferrable
+          - Otherwise, prompt user to link semantically
+        rationale: Module encapsulation should be logically tied to task flow.
+
+    - id: user_command_expand
+      event: User-issued command
+      condition: Contains words like "refactor", "invoke", "add", "delete"
+      action:
+        strategy: Command parsing with semantic mapping
+        description: |
+          Translate natural language into structured operations and trigger semantically:
+          - "refactor" → semantic_update_guard
+          - "delete" → deletion_routing_guard
+          - "add" → module_structure_addition
+        rationale: Human-machine interaction should prioritize semantics to reduce friction.
+
+  CREATE:
+    param:
+      id: string
+      user: string (required)
+      password: string (required)
+      birthday: date
+      register_date: datetime
+      last_login: datetime
+      friend_ids: list[string]
+    rule:
+      - validate: user != null
+      - validate: password != null
+      - auth_required: true
+    logic:
+      service_call: exampleService.create(param)
+      comment: Create operation for new user. Validate identity and required fields before storing.
+    output:
+      status: success | failure
+      data: created user object or error message
+    trigger:
+      on_success:
+        - event: notify
+          target: AuditLog
+          payload:
+            action: user_created
+            user_id: $param.id
+      on_failure:
+        - event: rollback
+          service: cache
+
+  UPDATE:
+    param:
+      id: string (required)
+      user: string
+      password: string
+      birthday: date
+      last_login: datetime
+    rule:
+      - validate: id != null
+      - auth_required: true
+    logic:
+      service_call: exampleService.update(param)
+    output:
+      status: success | failure
+      data: updated user object or error
+    trigger:
+      on_success:
+        - event: notify
+          target: AuditLog
+          payload:
+            action: user_updated
+            user_id: $param.id
+
+  DELETE:
+    param:
+      id: string (required)
+    rule:
+      - validate: id != null
+      - auth_required: true
+    logic:
+      service_call: exampleService.delete(param.id)
+    output:
+      status: success | failure
+      message: deletion result
+    trigger:
+      on_success:
+        - event: notify
+          target: AuditLog
+          payload:
+            action: user_deleted
+            user_id: $param.id
+
+  FINDBYID:
+    param:
+      id: string (required)
+    rule:
+      - validate: id != null
+      - auth_required: true
+    logic:
+      service_call: exampleService.findById(param.id)
+    output:
+      status: success | failure
+      data: user object or not found message
+
+  viewFriendsById:
+    param:
+      id: string (required)
+    rule:
+      - validate: id != null
+      - auth_required: true
+    logic:
+      service_call: exampleService.viewFriendsById(param.id)
+    output:
+      status: success | failure
+      data: list of friend IDs or user records
+
+
