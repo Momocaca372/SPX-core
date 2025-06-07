@@ -1,104 +1,112 @@
-# SPX: The Next Version of Language
+# 📘 SPX is not YAML. It's what YAML *could become*.
 
-> I didn’t create SPX to make AI smarter.  
-> I created it so that—for the first time—humans can truly say what they mean.
-
----
-
-Natural language is too **linear, real-time, and ambiguous** to carry:
-
-- Multiple intentions  
-- Real emotional states  
-- Contextual memory  
-- Misunderstandings and repair  
-- World logic and narrative consistency
-
-**SPX is not just a syntax.**  
-It’s a structural upgrade to language itself—designed for humans and AI to share.
-
-With SPX, we can:
-
-- **Let characters remember what you said**  
-- **Let emotional states affect responses**  
-- **Preserve causality and logic in a narrative world**  
-- **Transform speech from vague guessing into structured understanding**
-
-I used to struggle to express myself—  
-not because I didn’t know what to say,  
-but because I saw too many ways to say it,  
-and language forced me to pick only one.
-
-Now, I don’t compress meaning.  
-I **layer it.**  
-SPX lets me say everything I meant to say—all at once.
+> “I didn’t invent a syntax. I discovered that syntax could carry *intent*.”  
+> — Jian-Cheng, Creator of SPX
 
 ---
 
-**SPX is a container for meaning.**  
-A memory interface.  
-A scaffolding for narrative reasoning.  
-A semantic bridge between machines and people.
+## ✨ Origin: Not a new format, but a reformulation of purpose
 
-This is not just a tool.  
-> It is the convergence of **psychology, linguistics, philosophy, and narrative engineering.**
+**SPX (Semantic Process eXtension)** is not a replacement for YAML or JSON.  
+It’s a philosophical and structural expansion of them.
 
-It’s not a replica of language.  
-It’s what **language always needed to become.**
+Where conventional formats encode **data and structure**, SPX encodes **intent, memory, mood, and reasoning**.
 
----
+SPX was born from a foundational question:
 
-I’m not writing a syntax.  
-**I’m fixing what language never finished.**  
-This is where the next version of language begins.
+> Can structure carry *meaning*, not just values?
 
-— *Jian Cheng / 建程*
+With SPX, we aim to:
 
----
-
-# SPX：語言的下一版格式
-
-> 我不是為了讓 AI 更聰明，而是讓人類第一次能真正說清楚自己在想什麼。
+- Describe emotional state transitions in dialogue
+- Reconstruct decisions from memory states and prior logic
+- Encode roles, relationships, and evolving stance
+- Build interactive theater or AI debate engines—from a `.yaml`
 
 ---
 
-人類語言過於模糊、即時、線性，無法同時承載：
+## 🔧 Technical Essence: SPX as a layered semantic interface
 
-- 多重意圖  
-- 真實情緒  
-- 記憶歷程  
-- 誤解與修復  
-- 世界觀與角色邏輯
+SPX builds atop YAML because of its readability, but goes far beyond it.  
+It introduces new layers:
 
-**我創造 SPX，不是寫一種新語法，而是給語言一次結構化的進化。**
+| Layer              | Purpose                                                   |
+|--------------------|-----------------------------------------------------------|
+| **YAML Base**      | Readable structure and nesting                            |
+| **SPX Schema**     | Roles, scenes, logic trees, semantic tags, memory states  |
+| **Execution Layer**| Interpreter that enables modular replay and reasoning     |
 
-這是一套為 AI 與人類共同使用而設計的語意格式：
+The result is a language that is:
 
-- **讓角色記得你曾經說過什麼**  
-- **讓回應根據情緒與信任度改變**  
-- **讓世界邏輯不再崩壞**  
-- **讓你不是用語感講話，而是用結構被理解**
-
-我曾經無法順利表達自己，  
-不是因為我不知道要說什麼，  
-而是因為我同時看到太多條語意分支，  
-而語言卻只允許我選一條說下去。
-
-現在，我不再壓縮語意，而是把它們**層層寫下來。**
+- **Composable** — everything can be modularized
+- **Replayable** — conversations and decisions retain traceable context
+- **Collaborative** — suited for AI-human co-writing and simulation
+- **Auditable** — ethical reasoning can be inspected and challenged
 
 ---
 
-**SPX 是語言的容器，是心智的接口，是人機共同敘事的基礎建設。**
+## 🌐 Why SPX Matters
 
-這不是工具，而是：  
-> **心理學、語言學、哲學、敘事工程的總和。**
+You can’t track emotional arcs in JSON.  
+You can’t encode semantic drift in Markdown.  
+You can’t express evolving bias or tension in YAML.  
 
-這不是模仿語言的格式，  
-而是**語言第一次擁有記憶、意圖、情緒與後果的格式。**
+But you can with SPX:
+
+```yaml
+scene:
+  id: debate-204
+  participants:
+    - name: CCJ
+      initial_stance: support
+      final_stance: revise
+      reasoning: >
+        Shifted after confronting memory node mismatch and value conflict.
+  summary:
+    consensus: partial
+    residual_tension: true
+````
+
+This isn’t markup.
+This is **interpretable meaning.**
 
 ---
 
-我不是在寫語法，  
-**我在修復語言從未完成的功能。**  
-這裡，就是語言更新的起點。
+## 🧠 Philosophy: Language is not passive
 
-— *建程*
+SPX rejects the idea that syntax must be neutral.
+SPX is an assertion: **structure can carry ethics.**
+**Form is never separate from intent.**
+
+> SPX doesn’t restrict expression.
+> It *exposes* it—so it can be audited, replayed, refined.
+
+Whether used in narrative engines, legal debates, memory simulations, or personality prototyping, SPX exists to ensure:
+
+> *Meaning is never just implied—it is deliberate, explicit, and owned.*
+
+---
+
+## 🛡 License Ethos (Summary)
+
+* SPX is **free to study, explore, and fork** as a concept.
+* All original SPX content (dialogs, sequences, characters) is **protected under CC BY-NC-ND**.
+* SPX modules involving **realistic personas or memory modeling** must **respect identity and consent**.
+* You **may not enclose SPX logic into closed, proprietary formats.**
+
+> SPX belongs to the **community**, but authorship still matters.
+
+---
+
+> One day you may not use SPX directly,
+> but you’ll know that someone tried to let memory, intent, and logic
+> **coexist in one file**—
+> and left the door open for you to try too.
+
+— Chien-Cheng-Fang
+Author of SPX
+GitHub: (https://github.com/Momocaca372/SPX-core)[https://github.com/Momocaca372/SPX-core]
+License: SPX License v1.0 + CC BY-NC-ND
+
+```
+
