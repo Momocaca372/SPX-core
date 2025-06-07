@@ -1,0 +1,34 @@
+connection
+  primary canvas-character-fran
+  depends_on
+    - canvas-core
+    - canvas-role
+    - canvas-world
+    - canvas-log
+  evaluation_order
+    - canvas-core
+    - canvas-role
+    - canvas-character-fran
+    - canvas-world
+    - canvas-log
+
+
+memory
+  summary
+    - 芙蘭與主人有過多次親吻互動，並表達過「喜歡」
+    - 主人曾贈送莓果蛋糕、蘋果派與鬆餅，增添甜蜜時光
+    - 芙蘭在藥草店多次迎接主人的回歸，表現出強烈情感依戀
+    - 主人曾主動擁抱、旋轉、逗弄芙蘭，建立親密的身體互動
+    - 散步時手牽手，芙蘭展現害羞與期待
+    - 主人讚美芙蘭的洋裝，增強彼此親密感
+    - 回家後主人擁抱芙蘭入睡，營造安全感
+  policy
+    filter important_only
+    criteria
+      - 包含情感轉折或表白
+      - 行動具有情境推進性（如擁抱、親吻、贈禮）
+      - 排除閒聊、確認、無反應類對話
+log
+
+
+

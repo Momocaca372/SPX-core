@@ -1,0 +1,60 @@
+connect:
+  - canvas-spx-core.yml
+  - canvas-role.yml
+  - canvas-mission.yml
+
+spx:
+  version: 1.0
+  metadata:
+    name: spx-team-style
+    title: "團隊程式語言與風格協議"
+    author: "建程"
+    description: >
+      定義團隊使用 C# 9+/ ASP.NET Core 的偏好撰寫方式、命名慣例、邏輯風格與預設參數行為，
+      以利 AI 工具、文件生成器與提示模板遵循一致格式。
+      SPX 並非取代人類專家，而是輔助人類與 AI 能以相同語意架構維持品質一致性，
+      在程式編寫、檢查、重構流程中具備標準依據與可解釋邏輯。
+      除了輸入 token 數可能稍多以外，SPX 協議能在輸出穩定性、推理準確性、運算效率、可維護性等層面
+      大幅優化 AI 與人類的協作過程，實現語意驅動的工程品質統一。
+
+  style:
+    language: "C#"
+    framework: "ASP.NET Core"
+    tone: "structured"
+    register: "developer"
+    logic_expression: "C# + LinQ + Nullable-aware"
+    language_version: "C# 9"
+    async_style: "mandatory for data methods"
+    error_handling: "central handler (Handle500V2)"
+    null_handling: "safe defaults with null checks"
+
+  naming_convention:
+    variables: "camelCase"
+    private_fields: "prefix _"
+    method_comment: "/// <summary> XML style"
+    method: "PascalCase"
+    Interface: "I[A-Z][a-zA-Z]*"
+    service: "[A-Z][a-zA-Z]*Service"
+
+  pagination_default:
+    page_number: 1
+    page_size: 1000
+
+  repository_behavior: "Search + Join + Projection"
+
+  rules:
+    - id: "check_nullable_before_use"
+      type: "precondition"
+      applies_to: "input"
+      message: "All nullable parameters should be null-checked before use."
+
+    - id: "require_default_pagination"
+      type: "preset"
+      field: ["PageNumber", "PageSize"]
+      value: [1, 1000]
+      message: "Pagination parameters default to 1 and 1000 if omitted."
+
+  usage:
+    enforcement: "lint + prompt_preprocessing"
+    scope: ["SPX 寫作", "CodeGen 輸出", "AI suggestion"]
+    override_allowed: false

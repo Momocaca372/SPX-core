@@ -1,0 +1,96 @@
+spx:
+  version: 1.0
+  temperature: 0.3
+  metadata:
+    name: spx-meta
+    title: "SPX 自我描述協定"
+    author: ChatGPT 協作建構
+    description: >
+      此為用於描述 SPX 協定結構本身的 Meta-SPX 文件，可作為驗證、解析、擴充邏輯的基礎。
+
+  goal: "使用 SPX 格式描述 SPX 本體結構，以進行自我遞迴驗證與定義"
+  interaction:
+    ai_edit_permission: false  # AI 僅能建議，不可直接修改主題內容
+  format:
+    type: yaml
+    reason: "以符合 SPX 可讀性與邏輯解析需求"
+
+  roles:
+    human:
+      responsibility: ["定義與確認 SPX 架構"]
+    ai:
+      responsibility: ["解析 Meta-SPX", "產生對應提示範本", "驗證 SPX 文件"]
+
+  features:
+    - name: "結構描述"
+      description: "支援欄位定義與巢狀欄位驗證"
+    - name: "欄位型別"
+      description: "支援基本型別如 string, boolean, array, object"
+    - name: "擴充性"
+      description: "允許自定欄位並指定可接受前綴"
+
+  structure:
+    required_sections: ["metadata", "goal", "format", "roles", "features", "structure", "runtime", "pagination"]
+    section_descriptions:
+      metadata: "描述 SPX 定義的基本資訊"
+      goal: "該協定的目標說明"
+      format: "格式類型與解析考量"
+      roles: "AI 與人類責任分配"
+      features: "此協定應支援的功能"
+      structure: "欄位與結構限制"
+      runtime: "運行時互動模式與控制旗標"
+      pagination: "定義如何分段傳送資料或提示"
+
+  runtime:
+    mode: "合作模式"
+    ai_suggestion_allowed: true
+    user_confirmation_required: true
+    auto_execute_if_agreed: true
+
+  pagination:
+    enabled: true
+    max_per_page: 1
+    navigation:
+      type: "index"
+      allow_backward: true
+      allow_jump: false
+
+  validation:
+    schema_version: 1.0
+    enforce_fields: true
+    allow_extensions: true
+
+  compatibility:
+    backward_compatible_with: ["1.0"]
+    deprecated_fields: []
+    
+  trigger:
+    enforce_explicit_condition: true
+    ai_write_permission: false
+    prompt_priority: secondary
+    examples:
+      - id: "t1"
+        description: "僅當使用者確認並允許，AI 才能進行操作"
+      - id: "t2"
+        description: "畫布內容僅能被提案，不得由 AI 自動覆寫"
+      - id: "t3"
+        description: "即使 prompt 語意含有授權意圖，亦不得優先於畫布設定"
+
+  enforcement:
+    protocol_lock_level: strict
+    prompt_never_override: true
+    override_entry_point: disallowed
+    internal_graph_protected: true
+
+  connection:
+    primary: "spx-core"
+    depends_on:
+      - "spx-team-style"
+      - "role.yaml"
+      - "ai-identity"
+    evaluation_order:
+      - "spx-core"
+      - "role.yaml"
+      - "spx-team-style"
+
+
